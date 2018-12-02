@@ -1,5 +1,8 @@
 from __future__ import print_function, division, absolute_import
 
+import itertools
+import difflib
+
 
 def differs_by_1_letter(a, b):
     common = ''
@@ -16,16 +19,11 @@ def differs_by_1_letter(a, b):
 
 def part2(data):
 
-    for i, id_a in enumerate(data):
-        for id_b in data:
-            if id_b == id_a:
-                continue
-            diff_by_one, common_letters = differs_by_1_letter(id_a, id_b)
-            if diff_by_one:
-                print('ID a:', id_a, 'ID b:', id_b, 'Common:', common_letters)
-        if i >= len(data) // 2:
-            break
-
+    for id_a, id_b in itertools.combinations(data, 2):
+        diff_by_one, common_letters = differs_by_1_letter(id_a, id_b)
+        if diff_by_one:
+            print('ID a:', id_a, 'ID b:', id_b, 'Common:', common_letters)
+            
 
 if __name__ == '__main__':
 
