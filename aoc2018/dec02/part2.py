@@ -23,7 +23,7 @@ def part2(data):
         diff_by_one, common_letters = differs_by_1_letter(id_a, id_b)
         if diff_by_one:
             print('ID a:', id_a, 'ID b:', id_b, 'Common:', common_letters)
-            
+
 
 if __name__ == '__main__':
 
