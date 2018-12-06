@@ -57,7 +57,7 @@ def part1(points):
     bottom = voronoi[-1, :]
 
     # The points which don't contain infinite indices (if its on the boundary, it will be infinite)
-    finite_idxs = [i for i in range(n) if i not in top and i not in left and i not in right and i not in bottom]
+    finite_idxs = [i for i in range(n) if i not in np.concatenate((top, left, bottom, right))]
 
     max_area = -1
     for i in finite_idxs:
