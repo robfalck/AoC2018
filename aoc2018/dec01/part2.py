@@ -9,7 +9,6 @@ def part2():
 
     inp = [int(s) for s in lines]
     seen_freqs = set()
-
     freq = 0
     for i in itertools.cycle(inp):
         freq += i

@@ -7,6 +7,7 @@ patterns = [chr(code) for code in range(97, 97+26)]
 patterns = [char + char.upper() for char in patterns]
 patterns = patterns + [p[::-1] for p in patterns]
 regexes = [re.compile(pattern) for pattern in patterns]
+regex = re.compile('|'.join(patterns))
 
 
 def fully_react_polymer_regex(polymer):
