@@ -29,7 +29,7 @@ class Node(object):
             for idx in self.metadata:
                 try:
                     tally += self.children[idx - 1].get_value()
-                except IndexError as E:
+                except IndexError as e:
                     pass
         return tally
 
