@@ -4,7 +4,7 @@ from collections import deque
 import itertools
 
 
-def part1(num_players, last_marble):
+def solve(num_players, last_marble):
     circle = deque([0])
 
     scores = dict([(i, 0) for i in range(num_players)])
@@ -24,18 +24,15 @@ def part1(num_players, last_marble):
 
 
 if __name__ == '__main__':
+    #
+    #
+    # part1(num_players=9, last_marble=25)
+    # part1(num_players=10, last_marble=1618)
 
+    print('part 1: ', end='')
+    solve(num_players=424, last_marble=71482) # 408679
 
-    part1(num_players=9, last_marble=25)
-    part1(num_players=10, last_marble=1618)
-    part1(num_players=424, last_marble=71482) # 408679
+    # part 2
+    print('part 2: ', end='')
+    solve(num_players=424, last_marble=71482 * 100)
 
-
-    # part1(num_players=424, last_marble_score=71482)
-    # wrong 110783
-
-
-    # # # print('result: ', end='')
-    # with open('input.txt', 'r') as f:
-    #     lines = [s.strip() for s in f.readlines()]
-    # part1(data=lines[0])
