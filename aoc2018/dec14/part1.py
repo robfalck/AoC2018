@@ -1,4 +1,3 @@
-from collections import deque
 
 
 def solve(score, take_digits, after):
@@ -34,9 +33,6 @@ def solve(score, take_digits, after):
     result = [recipes[i] for i in range(after, after + take_digits)]
     result = ''.join([str(i) for i in result])
     return result
-
-
-
 
 
 if __name__ == '__main__':
