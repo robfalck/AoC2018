@@ -259,7 +259,6 @@ def solve(data):
 
             matches = set()
             for instruction, test_func in test_map.items():
-                # print(test_func(initial, final, instr), instruction in op_code_map[instr[0]])
                 if test_func(initial, final, instr):
                     op_code_map[instr[0]].add(instruction)
                     matches.add(instruction)
@@ -273,7 +272,6 @@ def solve(data):
     # At least one code should have only one instruction associated with it
     # Pare down the list by removing that as a candidate from all other op codes
     # Repeat until each op code only has one associated instruction.
-
     for i in range(16):
         for op_code, possible_instructions in op_code_map.items():
             # print(op_code, possible_instructions)
@@ -291,7 +289,6 @@ def solve(data):
 
     for i in range(16):
         print('{0}: {1}'.format(i, actual_op_codes[i]))
-
 
     # Now run the instructions
     registers = [0, 0, 0, 0]
