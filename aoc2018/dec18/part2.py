@@ -1,7 +1,5 @@
 from __future__ import print_function, division, absolute_import
 
-import itertools
-
 from part1 import parse_input, count_adjacent, mutate, print_land
 
 
@@ -10,9 +8,6 @@ def solve(data, minutes=10):
     acres, num_rows, num_cols = parse_input(data)
 
     acres_history = {0: acres}
-
-    wooded_history = {}
-    lumber_yard_history = {}
 
     found_repeat = False
 
