@@ -1,52 +1,83 @@
 from __future__ import print_function, division, absolute_import
 
+import random
 import re
-import numpy as np
-import collections
+
+# The change in position associated with every direction
+headings = {'left': (-1, 0),
+            'right': (1, 0),
+            'down': (0, 1)}
 
 
-def get_shortest_path(start, end, allies, enemies):
-    """
-    Returns a np array of the board where each element holds
-    the number of moves required to get from pos to that element.
-    """
 
-    # Setup the visited set and queue for the BFS
-    visited, queue = set(), collections.deque([(start)])
-    visited.add(start)
+class WaterBlock(object):
 
-    # Setup a set of spaces occupied by units
+    def __init__(self):
+        self.pos = (500, 1)
+        self.wetted_locs = set()
+        self.dx = 0
+        self.dy = 1
+        self.stopped = False
+        self.heading = random.choice(('left', 'right'))
+        self.num_heading_changes = 0
 
-    # Perform the BFS to get the shortest path
-    prev = {start: None}
-    while queue:
-        loc = queue.popleft()
-        for neighbor in graph[loc]:
-            if neighbor == end:
-                # Found the end, clear the queue and log the previous location
-                queue.clear()
-                prev[neighbor] = loc
-                break
-            elif neighbor not in visited and neighbor in graph and neighbor not in occupied:
-                queue.append((neighbor))
-            prev[neighbor] = loc
-            visited.add(neighbor)
+    def sim_step(self, clay, standing_water, wetted, max_y):
+        if self.stopped:
+            return
 
-    # Reconstruct path
-    path = []
-    at = end
-    for i in range(20):
-        path.append(at)
-        at = prev[at]
-        if at is None:
-            break
-    else:
-        path.reverse()
-        print('foo')
-        print(path)
-    path.reverse()
+        # Add the current location to the global wetted set and this block's wetted set.
+        wetted.add(self.pos)
+        self.wetted_locs.add(self.pos)
 
-    return path
+        # If the block of water can fall, it should fall.
+        next_square = self.pos[0], self.pos[1] + 1
+        if next_square not in clay and next_square not in standing_water:
+            # Fall one square
+            self.pos = next_square
+
+            # Reset the number of heading changes so we start counting again at the next horizontal flow
+            self.num_heading_changes = 0
+            # Reset the heading so that we could flow left or right at the next level we fall to.
+            self.heading = random.choice(('left', 'right'))
+
+            # Check if we've dropped out the bottom of the scan
+            if self.pos[1] > max_y:
+                self.stopped = True
+        else:
+            # the square below this water is either water or clay
+            # flow sideways, starting with a random direction 'left' or 'right'
+            dx = 1 if self.heading == 'right' else -1
+            next_square = self.pos[0] + dx, self.pos[1]
+            if next_square in clay or next_square in standing_water:
+                # change heading
+                self.heading = 'left' if self.heading == 'right' else 'right'
+                self.num_heading_changes += 1
+                if self.num_heading_changes > 1:
+                    self.stopped = True
+            else:
+                self.pos = next_square
+
+
+def print_scan(min_x, max_x, min_y, max_y, clay, spring=(500, 0), wetted=None, standing_water=None):
+    standing_water = set() if standing_water is None else standing_water
+    wetted = set() if wetted is None else wetted
+
+    for j in range(0, max_y + 1):
+        for i in range(min_x, max_x + 1):
+            if (i, j) == spring:
+                print('+', end='')
+            elif (i, j) in clay:
+                print('#', end='')
+            elif (i, j) in standing_water:
+                print('~', end='')
+            elif (i, j) in wetted:
+                print('|', end='')
+            else:
+                print('.', end='')
+        print()
+
+
+
 
 
 def parse_input(data):
@@ -90,12 +121,32 @@ def solve(data):
     clay, min_x, max_x, min_y, max_y = parse_input(data)
     print(clay, min_x, max_x, min_y, max_y)
 
+    wetted = set()
+    standing_water = set()
+    water_blocks = []
+
+    for i in range(100):
+        water_blocks.append(WaterBlock())
+        w = water_blocks[-1]
+        while not w.stopped:
+            w.sim_step(clay, standing_water, wetted, max_y)
+        if w.pos[1] <= max_y:
+            standing_water.add(w.pos)
+
+    print_scan(min_x, max_x, min_y, max_y, clay, wetted=wetted, standing_water=standing_water)
+
+    print('standing water tiles:', len(standing_water))
+    print('wetted tiles:', len(wetted))
+
+    return len(wetted), len(standing_water)
+
 
 if __name__ == '__main__':
 
     with open('test_input.txt', 'r') as f:
         lines = [s.rstrip() for s in f.readlines()]
-    solve(data=lines)
+    num_wetted, num_standing_water = solve(data=lines)
+    assert(num_wetted == 57)
 
     # with open('input.txt', 'r') as f:
     #     lines = [s.rstrip() for s in f.readlines()]
